@@ -1,0 +1,7 @@
+node_modules/
+run.sh
+*.log
+npm-debug.log
+app/config/config.js
+app/server/
+public/
