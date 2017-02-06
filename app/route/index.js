@@ -3,8 +3,10 @@ let builder = require('./messageroutes.js');
 let categoryRoutes = require('./categoryroutes.js');
 let commentRoutes = require('./commentroutes.js');
 let fileRoutes = require('./fileroutes.js');
+let moduleRoutes = require('./moduleroutes.js');
 let statisticRoutes = require('./statisticroutes.js');
 let renderingRoutes = require('./renderingroutes.js');
+
 
 const build = (Model) => {
     // Get Modules
@@ -27,6 +29,7 @@ const build = (Model) => {
             router.use('/comments', commentRoutes);
             router.use('/files', fileRoutes);
             router.use('/statistics', statisticRoutes);
+            router.use('/modules', moduleRoutes);
 
             resolve(router);
         }).catch(err => {

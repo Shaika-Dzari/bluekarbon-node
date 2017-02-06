@@ -5,9 +5,9 @@ let htmlUtils = require('../utils/htmlutils.js');
 let fileUtils = require('../utils/fileutils.js');
 let config = require('../config/config.js');
 let Page = require('../common/page.js');
+let normalize = require('../common/Normalize.js');
 
 let router = express.Router();
-let normalize = require('../common/Normalize.js');
 
 // Pipe to index
 // router.use(/\/(?!(api|\.css|\.js|\.gif)).*/, function(req, res, next) {
@@ -15,7 +15,8 @@ let normalize = require('../common/Normalize.js');
 //     res.sendFile('index.html', { root: publicFolder });
 // });
 
-router.use('/', (req, res, next) => {
+router.use(/\/(?!(api|.*\.css|.*\.js|.*\.gif)).*/, (req, res, next) => {
+    console.log(req.url + ' redirected to index.html...');
 
     let page = new Page(req, 10);
     let modules = null;
@@ -29,11 +30,35 @@ router.use('/', (req, res, next) => {
 
     Promise.all([modulesPromise, blogpostsPromise, categoriesPromise]).then(ds => {
 
-        console.log(ds);
+        let store = {};
+
+        if (ds && ds.length == 3) {
+            modules = normalize(ds[0]);
+            blogposts = normalize(ds[1], true);
+            categories = normalize(ds[2], true);
+
+
+            store = {
+                modules: modules,
+                categories: categories,
+                blogposts: blogposts
+            }
+
+            let modulecodes = {};
+            store.modules.index.forEach(i => {
+                modulecodes[store.modules.items[i].code] = i;
+            });
+            store.modules.codeindex = modulecodes;
+
+            for (let s in store) {
+                store[s].preloaded = true;
+            }
+        }
 
         // preloadedState: JSON.stringify(store)
         res.render('basic', {
-            page: {title: config.site.title, author: config.site.author}
+            page: {title: config.site.title, author: config.site.author},
+            preloadedState: JSON.stringify(store)
         });
 
     }).catch(error=> {
