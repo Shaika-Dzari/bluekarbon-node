@@ -75,7 +75,8 @@ module.exports.init = function(db, rootFolder) {
     });
 
     // Index
-    //server.use('/', require('./app/server/server-routes.js'));
+    server.use('/', require('../route/renderingroutes.js'));
+
 
     server.use(function(err, req, res, next) {
 

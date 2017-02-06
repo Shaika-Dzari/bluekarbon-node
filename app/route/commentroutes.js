@@ -43,14 +43,16 @@ router.get('/', (req, res, next) => {
     let user = req.user;
     let mid = parseInt(req.query.messageid);
     let page = new Page(req, DEFAULT_PAGE_SIZE);
+    let wheres = {};
 
     if (!mid && (!user || user.role != 'admin')) {
         return res.status(400).json({message: "Missing message's id"});
     }
 
-    let wheres = mid ? {messageid: mid} : undefined;
-
-    console.log(page);
+    // By Message
+    if (mid) wheres.messageid = mid;
+    // Approved ?
+    if (!user) wheres.approved = true;
 
     Models.comment.findAll({where: wheres, offset: page.offset(), limit: page.size(), order: 'createdat desc'}).then(comments => {
         res.json(cleanup(user, comments));
