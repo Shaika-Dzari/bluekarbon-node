@@ -17,7 +17,7 @@ function build(modid) {
         }
 
         Models.message.findAll({where: conds}).then(ms => {
-            return res.json(ms);
+            return res.json(htmlUtils.computePrettyUrl(ms));
         }).catch(err => {
             console.log(err);
             next(new Error("Error loading message"));
@@ -40,7 +40,7 @@ function build(modid) {
         }
 
         Models.message.findOne({where: conds}).then(m => {
-            return res.json(m);
+            return res.json(htmlUtils.computePrettyUrl(m));
         }).catch(err => {
             next(new Error("Error loading message"));
         });
@@ -70,7 +70,7 @@ function build(modid) {
         };
 
         Model.message.create(m).then(dmMsg => {
-            return res.status(201).json(dmMsg);
+            return res.status(201).json(htmlUtils.computePrettyUrl(dmMsg));
         }).catch(err => {
             next(new Error("Error creating message"));
         });
@@ -93,7 +93,7 @@ function build(modid) {
 
 
         Model.message.update(m).then(dmMsg => {
-            return res.json(dmMsg);
+            return res.json(htmlUtils.computePrettyUrl(dmMsg));
         }).catch(err => {
             next(new Error("Error updating message"));
         });

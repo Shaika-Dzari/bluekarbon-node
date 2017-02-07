@@ -19,7 +19,31 @@ const mkToHtml = (text) => {
     return null;
 }
 
+
+function computePrettyUrl(msgs) {
+    if (msgs) {
+        let newmsgs;
+        if (Array.isArray(msgs)) {
+            newmsgs = [];
+            for (let m of msgs) {
+                let am = m.dataValues;
+                am.permurl = am.id + '--' + am.prettyurl;
+                newmsgs.push(am);
+            }
+        } else {
+            newmsgs = msgs.dataValues;
+            newmsgs.permurl = msgs.id + '--' + msgs.prettyurl;
+        }
+
+        return newmsgs;
+    }
+
+    return msgs;
+}
+
+
 module.exports = {
     sanitizeUrl: sanitizeUrl,
-    mkToHtml: mkToHtml
+    mkToHtml: mkToHtml,
+    computePrettyUrl: computePrettyUrl
 }

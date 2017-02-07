@@ -33,8 +33,9 @@ router.use(/\/(?!(api|.*\.css|.*\.js|.*\.gif)).*/, (req, res, next) => {
         let store = {};
 
         if (ds && ds.length == 3) {
+
             modules = normalize(ds[0]);
-            blogposts = normalize(ds[1], true);
+            blogposts = normalize(htmlUtils.computePrettyUrl(ds[1]), true);
             categories = normalize(ds[2], true);
 
 
