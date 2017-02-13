@@ -2,6 +2,9 @@ let express = require('express');
 let Models = require('../entity/index.js');
 let authUtils = require('../utils/authutils.js');
 let htmlUtils = require('../utils/htmlutils.js');
+let Page = require('../common/page.js');
+
+const DEFAULT_PAGE_SIZE = 3;
 
 function build(modid) {
     let router = express.Router();
@@ -11,12 +14,16 @@ function build(modid) {
      */
     // TODO: Pagination
     router.get('/', (req, res, next) => {
+
         let conds = {
             moduleid: modid,
             published: true
         }
 
-        Models.message.findAll({where: conds}).then(ms => {
+        // Pagination ?
+        let page = new Page(req, DEFAULT_PAGE_SIZE);
+
+        Models.message.findAll({where: conds, offset: page.offset(), limit: page.size(), order: 'createdat desc'}).then(ms => {
             return res.json(htmlUtils.computePrettyUrl(ms));
         }).catch(err => {
             console.log(err);

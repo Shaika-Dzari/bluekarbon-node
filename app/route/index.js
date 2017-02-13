@@ -6,7 +6,7 @@ let fileRoutes = require('./fileroutes.js');
 let moduleRoutes = require('./moduleroutes.js');
 let statisticRoutes = require('./statisticroutes.js');
 let renderingRoutes = require('./renderingroutes.js');
-
+let authenticationRoutes = require('./authenticationroutes.js');
 
 const build = (Model) => {
     // Get Modules
@@ -30,6 +30,7 @@ const build = (Model) => {
             router.use('/files', fileRoutes);
             router.use('/statistics', statisticRoutes);
             router.use('/modules', moduleRoutes);
+            router.use('/users', authenticationRoutes);
 
             resolve(router);
         }).catch(err => {

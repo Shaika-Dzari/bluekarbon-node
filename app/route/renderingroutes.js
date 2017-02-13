@@ -22,27 +22,37 @@ router.use(/\/(?!(api|.*\.css|.*\.js|.*\.gif)).*/, (req, res, next) => {
     let modules = null;
     let blogposts = null;
     let categories = null;
+    let statistics = null;
 
     // Blogpost
     let modulesPromise = Models.module.findAll();
     let blogpostsPromise = Models.message.findAll();
     let categoriesPromise = Models.category.findAll();
+    let statsPromise = Models.statistic.findAll();
 
-    Promise.all([modulesPromise, blogpostsPromise, categoriesPromise]).then(ds => {
+    Promise.all([modulesPromise, blogpostsPromise, categoriesPromise, statsPromise]).then(ds => {
 
         let store = {};
 
-        if (ds && ds.length == 3) {
+        if (ds && ds.length == 4) {
 
             modules = normalize(ds[0]);
             blogposts = normalize(htmlUtils.computePrettyUrl(ds[1]), true);
             categories = normalize(ds[2], true);
+            statistics = ds[3];
 
+            let statsStore = {tables: {}};
+
+            statistics.forEach(s => {
+                statsStore.tables[s.tablename] = statsStore.tables[s.tablename] || [];
+                statsStore.tables[s.tablename].push(s);
+            });
 
             store = {
                 modules: modules,
                 categories: categories,
-                blogposts: blogposts
+                blogposts: blogposts,
+                statistics: statsStore
             }
 
             let modulecodes = {};

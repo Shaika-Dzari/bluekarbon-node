@@ -91,7 +91,7 @@ create table file (
     constraint fk_file_accountid foreign key (ownerid) references userinfo (id)
 );
 
-create table statistics (
+create table statistic (
     id serial primary key,
     tablename text not null,
     statistic text not null,

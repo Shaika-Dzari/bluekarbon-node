@@ -2,6 +2,13 @@
 create or replace function calculate_statistics_message() returns trigger as $$
 begin
     update statistics set (value) = (select count(*) from message) where tablename = 'message' and statistic = 'total_count';
+
+    update statistic as s
+    set value = md.value
+    from (select d.code, count(*) as value from message m inner join module d on (m.moduleid = d.id) group by d.code) as md
+    where s.tablename = 'message'
+    and s.statistic = lower(md.code) || '_total_count';
+
     return NEW;
 end;
 $$

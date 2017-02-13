@@ -7,8 +7,7 @@ module.exports.init = function (express) {
 
     passport.use(new LocalStrategy( (username, password, done) => {
 
-        Models.user.find({where: {username: username}}).then(user => {
-            // ? if (err) { return done(err); }
+        Models.userinfo.findOne({where: {username: username}}).then(user => {
 
             if (!user) {
                 return done(null, false, { message: 'Incorrect username.' });
@@ -19,6 +18,9 @@ module.exports.init = function (express) {
             }
 
             return done(null, user);
+        }).catch(err => {
+            console.error(err);
+            return done(null, false, { message: 'Unexpected error.' });
         });
     }));
 

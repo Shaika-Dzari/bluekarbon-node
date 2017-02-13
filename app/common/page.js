@@ -4,7 +4,7 @@ const DEFAULT_MAX_PAGE_SIZE = 30;
 
 function Page(request, pagesize) {
     let size = request.query.size ? parseInt(request.query.size) : pagesize || DEFAULT_PAGE_SIZE;
-    let page = request.query.page ? parseInt(request.query.page) : DEFAULT_PAGE;
+    let page = request.query.page ? parseInt(request.query.page) - 1 : DEFAULT_PAGE;
 
     if (size > DEFAULT_MAX_PAGE_SIZE) {
         size = DEFAULT_MAX_PAGE_SIZE;

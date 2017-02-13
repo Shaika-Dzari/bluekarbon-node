@@ -89,6 +89,11 @@ module.exports.init = function(db, rootFolder) {
         res.status(errCode).end();
     });
 
+    // Execute db init code if any
+    if (config.database.init) {
+        config.database.init(db);
+    }
+
 
     let port = process.env.PORT || 1337;        // set our port
     server.listen(port);

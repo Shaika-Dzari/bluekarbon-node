@@ -18,9 +18,13 @@ from cats c, module_blog m
 ;
 
 -- Statistic
-insert into statistics(tablename, statistic, value) values('file', 'total_count', '0');
-insert into statistics(tablename, statistic, value) values('message', 'total_count', '0');
-insert into statistics(tablename, statistic, value) values('comment', 'total_count', '0');
+insert into statistic(tablename, statistic, value) values('file', 'total_count', '0');
+insert into statistic(tablename, statistic, value) values('message', 'total_count', '0');
+insert into statistic(tablename, statistic, value) values('comment', 'total_count', '0');
+insert into statistic(tablename, statistic, value) values('message', 'blog.total_count', '0');
+insert into statistic(tablename, statistic, value) values('message', 'project.total_count', '0');
+insert into statistic(tablename, statistic, value) values('message', 'story.total_count', '0');
+insert into statistic(tablename, statistic, value) values('message', 'about.total_count', '0');
 
 -- Default / disabled account
 insert into userinfo(username, password, displayname, email, role, enabled)

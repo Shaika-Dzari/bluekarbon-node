@@ -2,7 +2,7 @@
 
 module.exports = function(Sequelize, DataTypes) {
 
-    let User = Sequelize.define('user', {
+    let UserInfo = Sequelize.define('userinfo', {
         username: DataTypes.TEXT,
         password: DataTypes.TEXT,
         email: DataTypes.TEXT,
@@ -17,5 +17,5 @@ module.exports = function(Sequelize, DataTypes) {
         }
     });
 
-    return User;
+    return UserInfo;
 };
