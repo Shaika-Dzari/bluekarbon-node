@@ -11,7 +11,8 @@ let seqOptions = {
         freezeTableName: true,
         createdAt: 'createdat',
         updatedAt: 'updatedat'
-    }
+    },
+    logging: false
 }
 
 let sequelize = new Sequelize(config.database.uri, seqOptions);

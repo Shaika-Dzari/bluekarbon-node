@@ -76,7 +76,7 @@ function build(modid) {
             moduleid: modid
         };
 
-        Model.message.create(m).then(dmMsg => {
+        Models.message.create(m).then(dmMsg => {
             return res.status(201).json(htmlUtils.computePrettyUrl(dmMsg));
         }).catch(err => {
             next(new Error("Error creating message"));
@@ -88,21 +88,28 @@ function build(modid) {
      * Update new Message.
      */
     router.put('/:messageid', authUtils.enforceLoggedIn, function(req, res, next) {
-        let id = req.params.messageid;
+        let mid = parseInt(req.params.messageid, 10);
         let upMsg = req.body;
         let originalCategories = upMsg.categories
 
-        upMsg.prettyurl = htmlutils.sanitizeUrl(upMsg.prettyurl);
+        upMsg.prettyurl = htmlUtils.sanitizeUrl(upMsg.prettyurl);
         upMsg.published = !!upMsg.published;
-        upMsg.id = parseInt(id, 10);
-        upMsg.categories = JSON.stringify(upMsg.categories);
+        upMsg.categories = upMsg.categories;
         upMsg.html = htmlUtils.mkToHtml(upMsg.body);
 
+        let m = {
+            title: upMsg.title,
+            body: upMsg.body,
+            html: upMsg.html,
+            prettyurl: upMsg.prettyurl,
+            published: upMsg.published,
+            categories: upMsg.categories
+        };
 
-        Model.message.update(m).then(dmMsg => {
+        Models.message.update(m, {where: {id: mid}}).then(dmMsg => {
             return res.json(htmlUtils.computePrettyUrl(dmMsg));
         }).catch(err => {
-            next(new Error("Error updating message"));
+            next(err);
         });
     });
 
