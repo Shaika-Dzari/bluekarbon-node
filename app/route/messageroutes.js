@@ -76,8 +76,10 @@ function build(modid) {
             moduleid: modid
         };
 
-        Models.message.create(m).then(dmMsg => {
-            return res.status(201).json(htmlUtils.computePrettyUrl(dmMsg));
+        Models.message.create(m).then(dbid => {
+            Models.message.findOne({where: {id: dbid}}).then(dbMsg => {
+                return res.status(201).json(htmlUtils.computePrettyUrl(dbMsg));
+            }).catch(next);
         }).catch(err => {
             next(new Error("Error creating message"));
         });
@@ -106,11 +108,11 @@ function build(modid) {
             categories: upMsg.categories
         };
 
-        Models.message.update(m, {where: {id: mid}}).then(dmMsg => {
-            return res.json(htmlUtils.computePrettyUrl(dmMsg));
-        }).catch(err => {
-            next(err);
-        });
+        Models.message.update(m, {where: {id: mid}}).then(dbid => {
+            Models.message.findOne({where: {id: dbid}}).then(dbMsg => {
+                return res.json(htmlUtils.computePrettyUrl(dbMsg));
+            }).catch(next);
+        }).catch(next);
     });
 
     return router;
