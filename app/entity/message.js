@@ -4,6 +4,7 @@ module.exports = function(Sequelize, DataTypes) {
     let Message = Sequelize.define('message', {
         title: DataTypes.TEXT,
         body: DataTypes.TEXT,
+        html: DataTypes.TEXT,
         published: DataTypes.BOOLEAN,
         authorname: DataTypes.TEXT,
         authorid: DataTypes.INTEGER,

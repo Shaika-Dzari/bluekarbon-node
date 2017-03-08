@@ -12,9 +12,32 @@ const sanitizeUrl = (str) => {
     return oneStr.toLowerCase();
 }
 
+const removeCtrlChar = (text) => {
+    if (text) {
+        text = text.replace(/(?:\r\n|\r|\n)/g, '');
+    }
+
+    return text;
+}
+
+const escapeCtrlChar = (text) => {
+    if (text) {
+
+        text = text.replace(/\\n/g, '\\\\n')
+                   .replace(/(\\\")/g, '\\\\"')
+                   .replace(/\//g, '\\\\/')
+                   .replace(/\\b/g, '\\\\b')
+                   .replace(/\\f/g, '\\\\f')
+                   .replace(/\\t/g, '\\\\t')
+                   ;
+    }
+
+    return text;
+}
+
 const mkToHtml = (text) => {
     if (text) {
-       return remarkable.render(text)
+       return remarkable.render(text);
     }
     return null;
 }
@@ -45,5 +68,7 @@ function computePrettyUrl(msgs) {
 module.exports = {
     sanitizeUrl: sanitizeUrl,
     mkToHtml: mkToHtml,
-    computePrettyUrl: computePrettyUrl
+    computePrettyUrl: computePrettyUrl,
+    removeCtrlChar: removeCtrlChar,
+    escapeCtrlChar: escapeCtrlChar
 }

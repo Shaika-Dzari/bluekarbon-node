@@ -43,7 +43,7 @@ router.post('/', authUtils.enforceLoggedIn, (req, res, next) => {
         console.log(path);
 
 
-        FileUtils.uploadTo(file, path, filename, (finalFileName, finalFilePath) => {
+        fileUtils.uploadTo(file, path, filename, (finalFileName, finalFilePath) => {
 
             var newFile = { name: filename,
                             filepath: url + '/' + finalFileName,

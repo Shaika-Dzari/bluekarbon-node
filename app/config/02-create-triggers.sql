@@ -1,13 +1,16 @@
 -- Procedure to calculate stats
 create or replace function calculate_statistics_message() returns trigger as $$
 begin
-    update statistics set (value) = (select count(*) from message) where tablename = 'message' and statistic = 'total_count';
 
-    update statistic as s
-    set value = md.value
-    from (select d.code, count(*) as value from message m inner join module d on (m.moduleid = d.id) group by d.code) as md
-    where s.tablename = 'message'
-    and s.statistic = lower(md.code) || '_total_count';
+    execute 'update  ' || TG_TABLE_SCHEMA || '.statistic set (value) = ' ||
+            ' (select count(*) from ' || TG_TABLE_SCHEMA || '.message) where tablename = ''message'' and statname = ''total_count''';
+
+    execute 'update ' || TG_TABLE_SCHEMA || '.statistic as s ' ||
+            'set value = md.value ' ||
+            'from (select d.code, count(*) as value from ' || TG_TABLE_SCHEMA || '.message m ' ||
+            '   inner join ' || TG_TABLE_SCHEMA || '.module d on (m.moduleid = d.id) group by d.code) as md ' ||
+            'where s.tablename = ''message'' ' ||
+            '  and s.statname = lower(md.code) || ''_total_count''';
 
     return NEW;
 end;
@@ -17,7 +20,9 @@ LANGUAGE plpgsql
 
 create or replace function calculate_statistics_file() returns trigger as $$
 begin
-    update statistics set (value) = (select count(*) from file) where tablename = 'file' and statistic = 'total_count';
+    execute 'update ' || TG_TABLE_SCHEMA || '.statistic set (value) = ' ||
+            '(select count(*) from ' || TG_TABLE_SCHEMA || '.file) where tablename = ''file'' and statname = ''total_count''';
+    -- update statistic set (value) = (select count(*) from file) where tablename = 'file' and statname = 'total_count';
     return NEW;
 end;
 $$
@@ -26,7 +31,9 @@ LANGUAGE plpgsql
 
 create or replace function calculate_statistics_comment() returns trigger as $$
 begin
-    update statistics set (value) = (select count(*) from comment) where tablename = 'comment' and statistic = 'total_count';
+    execute 'update ' || TG_TABLE_SCHEMA || '.statistic set (value) = ' ||
+            ' (select count(*) from ' || TG_TABLE_SCHEMA || '.comment) where tablename = ''comment'' and statname = ''total_count''';
+
     return NEW;
 end;
 $$

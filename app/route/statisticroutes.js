@@ -5,10 +5,17 @@ let authUtils = require('../utils/authutils.js');
 
 let router = express.Router();
 
-router.get('/', authUtils.enforceLoggedIn, function(req, res, next) {
+router.get('/', function(req, res, next) {
 
     Models.statistic.findAll().then(sts => {
-        res.json(sts);
+        let statsStore = {tables: {}};
+
+        sts.forEach(s => {
+            statsStore.tables[s.tablename] = statsStore.tables[s.tablename] || [];
+            statsStore.tables[s.tablename].push(s);
+        });
+
+        res.json(statsStore);
     }).catch(err => {
         next(err);
     });

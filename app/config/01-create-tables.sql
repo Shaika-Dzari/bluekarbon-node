@@ -94,9 +94,9 @@ create table file (
 create table statistic (
     id serial primary key,
     tablename text not null,
-    statistic text not null,
+    statname text not null,
     value text not null,
     createdat timestamp with time zone not null default now(),
     updatedat timestamp with time zone,
-    unique(tablename, statistic)
+    unique(tablename, statname)
 );

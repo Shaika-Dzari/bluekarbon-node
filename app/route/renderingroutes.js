@@ -26,8 +26,8 @@ router.use(/\/(?!(api|.*\.css|.*\.js|.*\.gif)).*/, (req, res, next) => {
 
     // Blogpost
     let modulesPromise = Models.module.findAll();
-    let blogpostsPromise = Models.message.findAll();
-    let categoriesPromise = Models.category.findAll();
+    let blogpostsPromise = Models.message.findAll({order: 'createdat desc'});
+    let categoriesPromise = Models.category.findAll({order: 'name asc'});
     let statsPromise = Models.statistic.findAll();
 
     Promise.all([modulesPromise, blogpostsPromise, categoriesPromise, statsPromise]).then(ds => {
@@ -48,6 +48,13 @@ router.use(/\/(?!(api|.*\.css|.*\.js|.*\.gif)).*/, (req, res, next) => {
                 statsStore.tables[s.tablename].push(s);
             });
 
+            // Escape to not break json
+            /*
+            for (let bid in blogposts.items) {
+                blogposts.items[bid].body = htmlUtils.escapeCtrlChar(blogposts.items[bid].body);
+                blogposts.items[bid].html = htmlUtils.escapeCtrlChar(blogposts.items[bid].html);
+            }
+            */
             store = {
                 modules: modules,
                 categories: categories,
@@ -66,72 +73,15 @@ router.use(/\/(?!(api|.*\.css|.*\.js|.*\.gif)).*/, (req, res, next) => {
             }
         }
 
-        // preloadedState: JSON.stringify(store)
         res.render('basic', {
             page: {title: config.site.title, author: config.site.author},
-            preloadedState: JSON.stringify(store)
+            preloadedState: htmlUtils.escapeCtrlChar(JSON.stringify(store))
         });
 
     }).catch(error=> {
         next(error);
     });
 
-
-    /*
-    let cnt = db.unwrap();
-
-    cnt.task(t=> {
-        return t.batch([
-            t.any(Module.ALL),
-            t.any(Message.ALL_PUBLISHED_BY_NEXTPAGE, pagingParam.merge({moduleid: null})),
-            t.any(Category.ALL)
-        ]);
-    })
-    .then(objs=> {
-        let store = {};
-        if (objs) {
-
-            if (!objs[0]) { // Modules are mandatory
-                throw new Error("Unable to load modules.");
-            }
-
-            let ms = Module.rebuildModuleObject(objs[0]);
-            store.modules = normalize(ms);
-            // Build Code idx
-            let modulecodes = {};
-            store.modules.index.forEach(i => {
-                modulecodes[store.modules.items[i].code] = i;
-            });
-            store.modules.codeindex = modulecodes;
-
-            if (objs[1]) {
-                store.messages = normalize(Message.computePrettyUrl(objs[1]), true);
-
-                for (let mid in store.messages.items) {
-                    store.messages.items[mid].body = store.messages.items[mid].body.replace(/(?:\r\n|\r|\n)/g, '\\n');
-                }
-
-                store.messages.preloaded = true;
-            }
-
-            if (objs[2]) {
-                store.categories = normalize(objs[2], true);
-                store.categories.preloaded = true;
-            }
-
-        }
-
-
-        res.render('basic', {
-            page: {title: '4nakama.net - A whisper from my Ghost'},
-            preloadedState: JSON.stringify(store)
-        });
-    })
-    .catch(error=> {
-        next(error);
-    });
-
-    */
 
 });
 

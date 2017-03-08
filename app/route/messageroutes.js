@@ -16,8 +16,11 @@ function build(modid) {
     router.get('/', (req, res, next) => {
 
         let conds = {
-            moduleid: modid,
-            published: true
+            moduleid: modid
+        }
+
+        if (!authUtils.isLoggedIn(req) || !req.query.published) {
+            conds.published = true;
         }
 
         // Pagination ?
@@ -63,26 +66,25 @@ function build(modid) {
         let user = req.user;
         let msgreq = req.body;
 
+        let msgbody = msgreq.body || '';
+
         // Generate html
         let m = {
             title: msgreq.title,
-            body: msgreq.body,
-            html: htmlUtils.mkToHtml(msgreq.body),
+            body: msgbody,
+            html: htmlUtils.mkToHtml(msgbody),
             authorid: user.id,
             authorname: user.username,
             published: !!msgreq.published,
             prettyurl: htmlUtils.sanitizeUrl(msgreq.prettyurl),
-            categories: JSON.stringify(msgreq.categories),
+            categories: msgreq.categories,
             moduleid: modid
         };
 
-        Models.message.create(m).then(dbid => {
-            Models.message.findOne({where: {id: dbid}}).then(dbMsg => {
-                return res.status(201).json(htmlUtils.computePrettyUrl(dbMsg));
-            }).catch(next);
-        }).catch(err => {
-            next(new Error("Error creating message"));
-        });
+        Models.message.create(m).then(dbMsg => {
+            return res.status(201).json(htmlUtils.computePrettyUrl(dbMsg));
+        }).catch(next);
+
     });
 
 
@@ -92,17 +94,18 @@ function build(modid) {
     router.put('/:messageid', authUtils.enforceLoggedIn, function(req, res, next) {
         let mid = parseInt(req.params.messageid, 10);
         let upMsg = req.body;
+        let msgbody = upMsg.body || '';
         let originalCategories = upMsg.categories
 
         upMsg.prettyurl = htmlUtils.sanitizeUrl(upMsg.prettyurl);
         upMsg.published = !!upMsg.published;
         upMsg.categories = upMsg.categories;
-        upMsg.html = htmlUtils.mkToHtml(upMsg.body);
+        upMsg.html = htmlUtils.mkToHtml(msgbody);
 
         let m = {
             title: upMsg.title,
-            body: upMsg.body,
-            html: upMsg.html,
+            body: msgbody,
+            html: htmlUtils.mkToHtml(msgbody),
             prettyurl: upMsg.prettyurl,
             published: upMsg.published,
             categories: upMsg.categories
